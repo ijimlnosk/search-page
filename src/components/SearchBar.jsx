@@ -1,16 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
+import { searchApi } from 'apis/apiConfig';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import CustomButton from './Button';
 import CustomInput from './Input';
 
 const SearchBar = () => {
     const [input, setInput] = useState('');
     const [recentSearches, setRecentSearches] = useState([]);
     const [showRecentSearches, setShowRecentSearches] = useState(false);
+    const [selectedSearchIndex, setSelectedSearchIndex] = useState(-1); // 선택된 항목이 없음
     const navigate = useNavigate();
-    const wrapperRef = useRef(null);
+
+    const { isLoding, isError, data, error } = useQuery({
+        queryKey: ['searchData', input],
+        queryFn: () => searchApi(input),
+        enabled: !!input,
+    });
+
+    if (isLoding) return <div>Loding...</div>;
+    if (isError) return <div>Error: {error.message}</div>;
 
     useEffect(() => {
         try {
@@ -27,8 +37,30 @@ const SearchBar = () => {
         }
     }, []);
 
+    useEffect(() => {
+        const handleKeyDown = e => {
+            if (e.key === 'ArrowUp' && selectedSearchIndex > 0) {
+                setSelectedSearchIndex(selectedSearchIndex - 1);
+            } else if (
+                e.key === 'ArrowDown' &&
+                selectedSearchIndex < recentSearches.length - 1
+            ) {
+                setSelectedSearchIndex(selectedSearchIndex + 1);
+            } else if (e.key === 'Enter' && selectedSearchIndex !== -1) {
+                onRecentSearchClick(recentSearches[selectedSearchIndex]);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [selectedSearchIndex, recentSearches]);
+
     const handleInputChange = e => {
-        setInput(e.target.value);
+        const value = e.target.value;
+        setInput(value);
+        setShowRecentSearches(!value);
     };
 
     const updateRecentSearches = search => {
@@ -51,30 +83,58 @@ const SearchBar = () => {
     const onRecentSearchClick = search => {
         setInput(search);
         navigate(`/search?key=${encodeURIComponent(search)}`);
+        setSelectedSearchIndex(-1);
     };
 
     return (
         <>
-            <Styled.Wrapper
-                onFocus={() => setShowRecentSearches(true)}
-                onBlur={() => {
-                    setTimeout(() => setShowRecentSearches(false), 100);
-                }}
-            >
-                <CustomInput
-                    value={input}
-                    placeholder={'단어를 입력해주세요'}
-                    onChange={handleInputChange}
-                />
-                <CustomButton onClick={onSearchClick} text={'검색'} />
-            </Styled.Wrapper>
-            {showRecentSearches && recentSearches.length > 0 && (
+            <Styled.Form onSubmit={onSearchClick}>
+                <Styled.Wrapper
+                    onFocus={() => setShowRecentSearches(!input)}
+                    onBlur={() => {
+                        setTimeout(() => setShowRecentSearches(false), 100);
+                    }}
+                >
+                    <CustomInput
+                        value={input}
+                        placeholder={'단어를 입력해주세요'}
+                        onChange={handleInputChange}
+                    />
+                </Styled.Wrapper>
+            </Styled.Form>
+            {input && data && (
+                <Styled.Box>
+                    <Styled.Ul>
+                        {data.slice(0, 6).map((item, index) => (
+                            <Styled.Li
+                                key={index}
+                                onClick={() => onRecentSearchClick(search)}
+                                style={{
+                                    backgroundColor:
+                                        index === selectedSearchIndex
+                                            ? '#f0f0f0'
+                                            : 'transparent',
+                                }}
+                            >
+                                {item}
+                            </Styled.Li>
+                        ))}
+                    </Styled.Ul>
+                </Styled.Box>
+            )}
+            {!input && showRecentSearches && recentSearches.length > 0 && (
                 <Styled.Box>
                     <Styled.Ul>
                         {recentSearches.map((search, index) => (
                             <Styled.Li
                                 key={index}
                                 onClick={() => onRecentSearchClick(search)}
+                                style={{
+                                    backgroundColor:
+                                        index === selectedSearchIndex
+                                            ? '#f0f0f0'
+                                            : 'transparent',
+                                }}
                             >
                                 {search}
                             </Styled.Li>
@@ -87,6 +147,13 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
+
+const Form = styled.form`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
 
 const Wrapper = styled.div`
     width: 100%;
@@ -101,9 +168,6 @@ const Box = styled.div`
     box-shadow: 1px 1px 1px 1px #eee;
     margin-top: 4px;
     border-radius: 8px;
-    margin-left: -5%;
-    &:hover {
-    }
 `;
 
 const Ul = styled.ul`
@@ -113,15 +177,20 @@ const Ul = styled.ul`
 const Li = styled.li`
     line-height: 2;
     margin-left: -20px;
-
     &:hover {
         cursor: pointer;
     }
 `;
+const ResultBox = styled.div``;
+
+const ResultItem = styled.div``;
 
 const Styled = {
+    Form,
     Wrapper,
     Box,
     Ul,
     Li,
+    ResultBox,
+    ResultItem,
 };

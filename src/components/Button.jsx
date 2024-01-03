@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 
-const CustomButton = ({ onClick, text }) => {
+const CustomButton = ({ onClick, type, text }) => {
     return (
         <>
-            <Styeld.Button onClick={onClick}>{text}</Styeld.Button>
+            <Styeld.Button onClick={onClick} type={type}>
+                {text}
+            </Styeld.Button>
         </>
     );
 };
@@ -17,6 +19,9 @@ const Button = styled.button`
     border-radius: 8px;
     background-color: #8282e5;
     color: #fff;
+    &:hover {
+        cursor: pointer;
+    }
 `;
 
 const Styeld = {

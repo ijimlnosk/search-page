@@ -6,7 +6,7 @@ const MainPage = () => {
         <>
             <Styled.Wrapper>
                 <Styled.Box>
-                    <Styled.H1>DwingGul</Styled.H1>
+                    <Styled.H1>DingGle</Styled.H1>
                 </Styled.Box>
                 <SearchBar />
             </Styled.Wrapper>
@@ -20,6 +20,7 @@ const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    font-family: var(--font-RubikDoodleShadow);
 `;
 
 const Box = styled.div`
@@ -27,6 +28,7 @@ const Box = styled.div`
 `;
 const H1 = styled.h1`
     font-size: 54px;
+    letter-spacing: 10px;
 `;
 
 const Styled = {

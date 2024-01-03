@@ -1,6 +1,7 @@
 import { searchApi } from 'apis/apiConfig';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 
 const SearchPage = () => {
     const location = useLocation();
@@ -21,12 +22,42 @@ const SearchPage = () => {
 
     return (
         <>
-            <div>
+            <Styled.Wrapper>
+                <H1>----------- 검색 결과 -----------</H1>
                 {data.map((el, index) => (
-                    <div key={index}>{el}</div>
+                    <A
+                        href={`https://www.google.com/search?q=${el}`}
+                        key={index}
+                    >
+                        {el}
+                    </A>
                 ))}
-            </div>
+            </Styled.Wrapper>
         </>
     );
 };
 export default SearchPage;
+
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`;
+
+const A = styled.a`
+    color: #000;
+    text-decoration: none;
+    line-height: 2;
+    &:hover {
+        cursor: pointer;
+    }
+`;
+
+const H1 = styled.h1``;
+
+const Styled = {
+    Wrapper,
+    A,
+    H1,
+};
