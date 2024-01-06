@@ -16,3 +16,15 @@
 
 ## 사용 기술 스택
 ![s](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+
+## 구현화면
+<img width="1323" alt="스크린샷 2024-01-06 오후 10 25 43" src="https://github.com/ijimlnosk/search-page/assets/98089768/94b0ebf7-0080-470b-9c36-4c948a5923bd">
+<img width="1323" alt="스크린샷 2024-01-06 오후 10 26 38" src="https://github.com/ijimlnosk/search-page/assets/98089768/0af25c9e-9347-471e-8e28-48bd61162966">
+<img width="1323" alt="스크린샷 2024-01-06 오후 10 37 32" src="https://github.com/ijimlnosk/search-page/assets/98089768/a895ecc2-359f-4b0a-9ecc-f3755c19f860">
+
+## 기능
+ - 검색창 클릭 시, 최근 검색한 단어 최대 5개를 보여줍니다
+ - 검색창 클릭 후 단어 입력 시 해당 단어가 포함된 보기를 최대 6개 보여줍니다
+ - 단어 입력 후 Enter키를 누르면 해당 단어가 포함된 페이지로 이동합니다.
+ - 단어 클릭 시, 임시로 구글 패이지를 보여줍니다
+
